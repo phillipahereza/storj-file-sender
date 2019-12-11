@@ -2,12 +2,12 @@ package main
 
 import (
 	"crypto/sha256"
-	"encoding/hex"
+	"errors"
 	"flag"
 	"fmt"
+	"hash"
 	"io"
 	"os"
-	"errors"
 )
 
 func main() {
@@ -23,7 +23,7 @@ func main() {
 	}
 
 	// checksum file
-	_, err = checksumFile(fn)
+	_, err = hashFile(fn)
 	if err != nil {
 		fmt.Printf("Error - Checksumming file %s : %s\n", *fn, err)
 		os.Exit(1)
@@ -64,18 +64,18 @@ func validateFlags(host *string, fn *string) error {
 	return nil
 }
 
-func checksumFile(fn *string) (string, error) {
+func hashFile(fn *string) (hash.Hash, error) {
 	h := sha256.New()
 
 	f, err := os.Open(*fn)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 	defer f.Close()
 
 	if _, err := io.Copy(h, f); err != nil {
-		return "", err
+		return nil, err
 	}
 
-	return hex.EncodeToString(h.Sum(nil)), nil
+	return h, nil
 }
