@@ -1,13 +1,12 @@
 package main
 
 import (
-	"flag"
-	"os"
-	"io"
 	"crypto/sha256"
-	"github.com/davecgh/go-spew/spew"
-	"fmt"
 	"encoding/hex"
+	"flag"
+	"fmt"
+	"io"
+	"os"
 )
 
 func main() {
@@ -19,7 +18,7 @@ func main() {
 	validateFlags(host, fn)
 
 	// checksum file
-	cs, err := checksumFile(fn)
+	_, err := checksumFile(fn)
 	if err != nil {
 		fmt.Printf("Error - Checksumming file %s : %s\n", *fn, err)
 		os.Exit(1)
