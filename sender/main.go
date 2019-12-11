@@ -2,10 +2,12 @@ package main
 
 import (
 	"flag"
-
 	"os"
 	"io"
 	"crypto/sha256"
+	"github.com/davecgh/go-spew/spew"
+	"fmt"
+	"encoding/hex"
 )
 
 func main() {
@@ -16,9 +18,12 @@ func main() {
 	flag.Parse()
 	validateFlags(host, fn)
 
-	// get file
-
 	// checksum file
+	cs, err := checksumFile(fn)
+	if err != nil {
+		fmt.Printf("Error - Checksumming file %s : %s\n", *fn, err)
+		os.Exit(1)
+	}
 
 	// generate secret code
 
@@ -51,4 +56,20 @@ func validateFlags(host *string, fn *string) {
 		print("For help using this command tool please enter 'sender -h'")
 		os.Exit(1)
 	}
+}
+
+func checksumFile(fn *string) (string, error) {
+	h := sha256.New()
+
+	f, err := os.Open(*fn)
+	if err != nil {
+		return "", err
+	}
+	defer f.Close()
+
+	if _, err := io.Copy(h, f); err != nil {
+		return "", err
+	}
+
+	return hex.EncodeToString(h.Sum(nil)), nil
 }
