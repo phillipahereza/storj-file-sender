@@ -8,7 +8,7 @@ import (
 func main() {
 
 	// get argument
-	port := flag.Int("port", 0, "Mandatory - The port to listen on")
+	port := flag.Uint("port", 0, "Mandatory - The port to listen on")
 
 	flag.Parse()
 	validateFlags(port)
@@ -30,7 +30,7 @@ func relay() {
 	// on completion close connection
 }
 
-func validateFlags(port *int) {
+func validateFlags(port *uint) {
 	failed := false
 	msg := "Error - Mandatory flag missing "
 
