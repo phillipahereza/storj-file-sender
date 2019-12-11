@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"errors"
 )
 
 func main() {
@@ -15,10 +16,14 @@ func main() {
 	fn := flag.String("file", "", "Mandatory - The name of the file you wish to transfer")
 
 	flag.Parse()
-	validateFlags(host, fn)
+	err := validateFlags(host, fn)
+	if err != nil {
+		fmt.Printf("Error - Validating flags : %s", err)
+		os.Exit(1)
+	}
 
 	// checksum file
-	_, err := checksumFile(fn)
+	_, err = checksumFile(fn)
 	if err != nil {
 		fmt.Printf("Error - Checksumming file %s : %s\n", *fn, err)
 		os.Exit(1)
@@ -37,24 +42,26 @@ func main() {
 	// no errors exit
 }
 
-func validateFlags(host *string, fn *string) {
+func validateFlags(host *string, fn *string) error {
 	failed := false
-	msg := "Error - Mandatory flag missing "
+	msg := "Mandatory flag(s) missing : "
 
 	if *host == "" {
-		println(msg + "'host'")
+		msg += "'host', "
 		failed = true
 	}
 
 	if *fn == "" {
-		println(msg + "'file'")
+		msg += "'file', "
 		failed = true
 	}
 
 	if failed {
-		print("For help using this command tool please enter 'sender -h'")
-		os.Exit(1)
+		msg += "\nFor help using this command tool please enter 'sender -h'"
+		return errors.New(msg)
 	}
+
+	return nil
 }
 
 func checksumFile(fn *string) (string, error) {
