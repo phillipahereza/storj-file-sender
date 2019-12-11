@@ -4,24 +4,27 @@ import (
 	"flag"
 
 	"os"
+	"io"
+	"crypto/sha256"
 )
 
 func main() {
 	// get arguments
-	host := *flag.String("host", "", "Mandatory - The host of the file relay")
-	fn := *flag.String("file", "", "Mandatory - The name of the file you wish to transfer")
+	host := flag.String("host", "", "Mandatory - The host of the file relay")
+	fn := flag.String("file", "", "Mandatory - The name of the file you wish to transfer")
 
 	flag.Parse()
-
 	validateFlags(host, fn)
 
 	// get file
 
 	// checksum file
 
-	// generate code
+	// generate secret code
 
 	// open connection with relay
+
+	// display secret code
 
 	// begin transfer on accept, send checksum with meta data
 
@@ -30,16 +33,16 @@ func main() {
 	// no errors exit
 }
 
-func validateFlags(host string, fn string) {
+func validateFlags(host *string, fn *string) {
 	failed := false
 	msg := "Error - Mandatory flag missing "
 
-	if host == "" {
+	if *host == "" {
 		println(msg + "'host'")
 		failed = true
 	}
 
-	if fn == "" {
+	if *fn == "" {
 		println(msg + "'file'")
 		failed = true
 	}
