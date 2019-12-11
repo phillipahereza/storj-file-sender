@@ -8,6 +8,8 @@ import (
 	"hash"
 	"io"
 	"os"
+	"github.com/Samyoul/storj-file-sender/sender/codegen"
+	"encoding/binary"
 )
 
 func main() {
@@ -23,13 +25,15 @@ func main() {
 	}
 
 	// checksum file
-	_, err = hashFile(fn)
+	h, err := hashFile(fn)
 	if err != nil {
 		fmt.Printf("Error - Checksumming file %s : %s\n", *fn, err)
 		os.Exit(1)
 	}
 
 	// generate secret code
+	// Use the int64 encoded checksum of the file as part of the random seed
+	codegen.Make(int64(binary.BigEndian.Uint64(h.Sum(nil))))
 
 	// open connection with relay
 
