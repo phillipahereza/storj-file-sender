@@ -2,22 +2,23 @@ package main
 
 import (
 	"crypto/sha256"
+	"encoding/binary"
 	"errors"
 	"flag"
 	"fmt"
 	"hash"
 	"io"
 	"os"
+
 	"github.com/Samyoul/storj-file-sender/sender/codegen"
-	"encoding/binary"
 )
 
 func main() {
 	// get arguments
 	host := flag.String("host", "", "Mandatory - The host of the file relay")
 	fn := flag.String("file", "", "Mandatory - The name of the file you wish to transfer")
-
 	flag.Parse()
+
 	err := validateFlags(host, fn)
 	if err != nil {
 		fmt.Printf("Error - Validating flags : %s", err)

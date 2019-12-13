@@ -10,8 +10,8 @@ func main() {
 	host := flag.String("host", "", "Mandatory - The host of the file relay")
 	code := flag.String("code", "", "Mandatory - The secret code of the file you wish to receive")
 	dir := flag.String("out", "", "Mandatory - The name of the directory name you wish to receive the file to")
-
 	flag.Parse()
+
 	validateFlags(host, code, dir)
 
 	// make receive request to relay
