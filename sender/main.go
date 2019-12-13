@@ -33,11 +33,12 @@ func main() {
 
 	// generate secret code
 	// Use the int64 encoded checksum of the file as part of the random seed
-	codegen.Make(int64(binary.BigEndian.Uint64(h.Sum(nil))))
-
-	// open connection with relay
+	code := codegen.Make(int64(binary.BigEndian.Uint64(h.Sum(nil))))
 
 	// display secret code
+	println(code)
+
+	// open connection with relay
 
 	// begin transfer on accept, send checksum with meta data
 
