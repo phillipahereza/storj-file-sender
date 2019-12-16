@@ -9,6 +9,8 @@ import (
 	"os"
 
 	"github.com/Samyoul/storj-file-sender/common"
+	"github.com/Samyoul/storj-file-sender/sender/codegen"
+	"encoding/binary"
 )
 
 func main() {
@@ -30,8 +32,7 @@ func main() {
 
 	// generate secret code
 	// Use the int64 encoded checksum of the file as part of the random seed
-	//code := codegen.Make(int64(binary.BigEndian.Uint64(h.Sum(nil))))
-	code := "soup"
+	code := codegen.Make(int64(binary.BigEndian.Uint64(h.Sum(nil))))
 
 	// display secret code
 	println(code)
