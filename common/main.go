@@ -127,3 +127,35 @@ func getFileName(conn io.Reader) ([]byte, error) {
 
 	return out[:len(out)-2], nil
 }
+
+func MakeResponseHeaderReceive(file []byte, checksum []byte) []byte {
+	hdr := *new([]byte)
+
+	cs := make([]byte, 32)
+	copy(cs[:], checksum)
+	hdr = append(hdr, cs...)
+
+	hdr = append(hdr, file...)
+	hdr = append(hdr, Terminator...)
+
+	return hdr
+}
+
+func GetResponseHeader(conn io.Reader) (Header, error) {
+	hdr := Header{}
+	var err error
+
+	// Get request checksum
+	cs := make([]byte, 32)
+	if _, err = conn.Read(cs); err != nil {
+		return hdr, err
+	}
+	hdr["Checksum"] = cs
+
+	// Get request filename
+	if hdr["Filename"], err = getFileName(conn); err != nil {
+		return hdr, err
+	}
+
+	return hdr, nil
+}

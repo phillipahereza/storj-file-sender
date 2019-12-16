@@ -1,9 +1,10 @@
 package common
 
 import (
-	"testing"
-	"github.com/davecgh/go-spew/spew"
 	"bytes"
+	"testing"
+
+	"github.com/davecgh/go-spew/spew"
 )
 
 func TestMakeRequestHeaderSend(t *testing.T) {
