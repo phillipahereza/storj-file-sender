@@ -81,8 +81,8 @@ func validateArgs(args []string) error {
 	if len(args) != 3 {
 		return errors.New(
 			"invalid number of arguments.\n" +
-				"expected : ./send <relay-host>:<relay-port> <file-to-send>\n" +
-				"example  : ./send localhost:9021 corgis.mp4")
+				"expected : ./sender <relay-host>:<relay-port> <file-to-send>\n" +
+				"example  : ./sender localhost:9021 corgis.mp4")
 	}
 
 	return nil
