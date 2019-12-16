@@ -5,12 +5,19 @@ import (
 	"encoding/binary"
 	"errors"
 	"flag"
-	"fmt"
 	"hash"
 	"io"
+	"log"
+	"net"
 	"os"
 
 	"github.com/Samyoul/storj-file-sender/sender/codegen"
+)
+
+const (
+	Kb          = 1024
+	Mb          = Kb * Kb
+	BufferLimit = Mb * 4
 )
 
 func main() {
@@ -21,15 +28,13 @@ func main() {
 
 	err := validateFlags(host, fn)
 	if err != nil {
-		fmt.Printf("Error - Validating flags : %s", err)
-		os.Exit(1)
+		log.Fatalf("Error - Validating flags : %s", err)
 	}
 
 	// checksum file
 	h, err := hashFile(fn)
 	if err != nil {
-		fmt.Printf("Error - Checksumming file %s : %s\n", *fn, err)
-		os.Exit(1)
+		log.Fatalf("Error - Checksumming file %s : %s\n", *fn, err)
 	}
 
 	// generate secret code
@@ -40,6 +45,18 @@ func main() {
 	println(code)
 
 	// open connection with relay
+	conn, err := net.Dial("tcp", *host)
+	if err != nil {
+		log.Fatalf("Error - making a connection : %s", err)
+	}
+
+	// Set write buffer
+	err = conn.(*net.TCPConn).SetWriteBuffer(BufferLimit)
+	if err != nil {
+		log.Fatalf("Error - setting write buffer : %s", err)
+	}
+
+	// Write and send header on connection
 
 	// begin transfer on accept, send checksum with meta data
 
