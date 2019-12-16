@@ -2,7 +2,7 @@ package main
 
 import (
 	"bytes"
-	"flag"
+	"errors"
 	"io"
 	"log"
 	"net"
@@ -13,22 +13,21 @@ import (
 
 func main() {
 	// get arguments
-	host := flag.String("host", "", "Mandatory - The host of the file relay")
-	code := flag.String("code", "", "Mandatory - The secret code of the file you wish to receive")
-	dir := flag.String("out", "./", "Mandatory - The name of the directory name you wish to receive the file to")
-	flag.Parse()
-
-	validateFlags(host, code, dir)
+	args := os.Args
+	err := validateArgs(args)
+	if err != nil {
+		log.Fatalf("error - validating arguments : %s", err)
+	}
 
 	// open connection with relay
-	conn, err := net.Dial("tcp", *host)
+	conn, err := net.Dial("tcp", args[1])
 	if err != nil {
 		log.Fatalf("Error - making a connection : %s", err)
 	}
 	defer conn.Close()
 
 	// make receive request to relay
-	reqH := common.MakeRequestHeaderReceive(*code)
+	reqH := common.MakeRequestHeaderReceive(args[2])
 	conn.Write(reqH)
 
 	// get receive response header from relay with checksum and filename
@@ -38,7 +37,7 @@ func main() {
 	}
 
 	// start to receive data stream
-	fn := *dir + string(resH["Filename"])
+	fn := args[3] + string(resH["Filename"])
 
 	f, err := os.Create(fn)
 	if err != nil {
@@ -63,27 +62,13 @@ func main() {
 	}
 }
 
-func validateFlags(host *string, code *string, dir *string) {
-	failed := false
-	msg := "Error - Mandatory flag missing "
-
-	if *host == "" {
-		println(msg + "'host'")
-		failed = true
+func validateArgs(args []string) error {
+	if len(args) != 4 {
+		return errors.New(
+			"invalid number of arguments.\n" +
+				"expected : ./receive <relay-host>:<relay-port> <secret-code> <output-directory>\n" +
+				"example  : ./receive localhost:9021 this-is-a-secret-code out/")
 	}
 
-	if *code == "" {
-		println(msg + "'code'")
-		failed = true
-	}
-
-	if *dir == "" {
-		println(msg + "'out'")
-		failed = true
-	}
-
-	if failed {
-		print("For help using this command tool please enter 'receiver -h'")
-		os.Exit(1)
-	}
+	return nil
 }
