@@ -18,13 +18,13 @@ func main() {
 
 	err := validateArgs(args)
 	if err != nil {
-		log.Fatalf("Error - Validating arguments : %s", err)
+		log.Fatalf("error - validating arguments : %s", err)
 	}
 
 	// checksum file
 	h, err := common.HashFile(args[2])
 	if err != nil {
-		log.Fatalf("Error - Checksumming file %s : %s", args[2], err)
+		log.Fatalf("error - checksumming file %s : %s", args[2], err)
 	}
 
 	// generate secret code
@@ -37,14 +37,14 @@ func main() {
 	// open connection with relay
 	conn, err := net.Dial("tcp", args[1])
 	if err != nil {
-		log.Fatalf("Error - making a connection : %s", err)
+		log.Fatalf("error - making a connection : %s", err)
 	}
 	defer conn.Close()
 
 	// Set write buffer size
 	err = conn.(*net.TCPConn).SetWriteBuffer(common.BufferLimit)
 	if err != nil {
-		log.Fatalf("Error - setting write buffer : %s", err)
+		log.Fatalf("error - setting write buffer : %s", err)
 	}
 
 	// Write and send header on connection, send checksum and filename with header
@@ -81,9 +81,9 @@ func main() {
 func validateArgs(args []string) error {
 	if len(args) != 3 {
 		return errors.New(
-			"mandatory arguments not present.\n" +
-				"Expect the following arguments : `./send <relay-host>:<relay-port> <file-to-send>`\n" +
-				"Example : `./send localhost:9021 corgis.mp4`")
+			"invalid number of arguments.\n" +
+				"expect the following arguments : `./send <relay-host>:<relay-port> <file-to-send>`\n" +
+				"example : `./send localhost:9021 corgis.mp4`")
 	}
 
 	return nil
