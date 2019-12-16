@@ -15,7 +15,6 @@ import (
 func main() {
 	// get arguments
 	args := os.Args
-
 	err := validateArgs(args)
 	if err != nil {
 		log.Fatalf("error - validating arguments : %s", err)
@@ -82,8 +81,8 @@ func validateArgs(args []string) error {
 	if len(args) != 3 {
 		return errors.New(
 			"invalid number of arguments.\n" +
-				"expect the following arguments : `./send <relay-host>:<relay-port> <file-to-send>`\n" +
-				"example : `./send localhost:9021 corgis.mp4`")
+				"expected : ./send <relay-host>:<relay-port> <file-to-send>\n" +
+				"example  : ./send localhost:9021 corgis.mp4")
 	}
 
 	return nil

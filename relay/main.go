@@ -3,13 +3,11 @@ package main
 import (
 	"bytes"
 	"errors"
-	"flag"
 	"fmt"
 	"io"
 	"log"
 	"net"
 	"os"
-	"strconv"
 	"sync"
 
 	"github.com/Samyoul/storj-file-sender/common"
@@ -30,17 +28,16 @@ type streamMap map[string]*Stream
 
 func main() {
 	// get init argument
-	port := flag.Int("port", 9200, "Mandatory - The port to listen on")
-	flag.Parse()
-
-	validateFlags(port)
-
-	ps := ":" + strconv.Itoa(*port)
+	args := os.Args
+	err := validateArgs(args)
+	if err != nil {
+		log.Fatalf("error - validating arguments : %s", err)
+	}
 
 	// open TCP server
-	l, err := net.Listen("tcp", ps)
+	l, err := net.Listen("tcp", args[1])
 	if err != nil {
-		log.Fatalf("Error - Starting tcp server : %s", err)
+		log.Fatalf("error - starting tcp server : %s", err)
 	}
 	defer l.Close()
 
@@ -93,24 +90,15 @@ func handle(sm *streamMap, conn net.Conn) {
 	}
 }
 
-func validateFlags(port *int) {
-	failed := false
-	msg := "Error - Mandatory flag missing "
-
-	if *port == 0 {
-		println(msg + "'port'")
-		failed = true
+func validateArgs(args []string) error {
+	if len(args) != 2 {
+		return errors.New(
+			"invalid number of arguments.\n" +
+			"expected : ./relay :<port>\n" +
+			"example  : ./relay :9021")
 	}
 
-	if *port < 0 {
-		println(msg + "\n Error - 'port' must be an unsigned integer")
-		failed = true
-	}
-
-	if failed {
-		print("For help using this tool please enter 'relay -h'")
-		os.Exit(1)
-	}
+	return nil
 }
 
 func send(sm *streamMap, conn net.Conn, hdr common.Header) error {
