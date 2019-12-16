@@ -79,7 +79,7 @@ func main() {
 }
 
 func validateArgs(args []string) error {
-	if len(args) < 3 {
+	if len(args) != 3 {
 		return errors.New(
 			"mandatory arguments not present.\n" +
 				"Expect the following arguments : `./send <relay-host>:<relay-port> <file-to-send>`\n" +
