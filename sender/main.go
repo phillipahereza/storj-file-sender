@@ -52,8 +52,8 @@ func main() {
 		log.Fatalf("Error - setting write buffer : %s", err)
 	}
 
-	// Write and send header on connection send checksum with header
-	hdr := common.MakeRequestHeaderSend(code, h.Sum(nil))
+	// Write and send header on connection, send checksum and filename with header
+	hdr := common.MakeRequestHeaderSend(*fn, code, h.Sum(nil))
 	conn.Write(hdr)
 
 	// Open file hold ready to transfer
