@@ -2,7 +2,9 @@ package main
 
 import (
 	"bytes"
+	"errors"
 	"flag"
+	"fmt"
 	"io"
 	"log"
 	"net"
@@ -136,7 +138,11 @@ func send(sm *streamMap, conn net.Conn, hdr common.Header) error {
 }
 
 func receive(sm *streamMap, conn net.Conn, hdr common.Header) error {
-	s := (*sm)[string(hdr["Code"])] // I'm doing this to make the code much easier to read
+	// Check the stream exists in the stream map
+	s, ok := (*sm)[string(hdr["Code"])]
+	if !ok {
+		return errors.New(fmt.Sprintf("unrecognised secret code '%s'", hdr["Code"]))
+	}
 
 	rh := common.MakeResponseHeaderReceive(s.filename, s.checksum)
 	_, err := conn.Write(rh)

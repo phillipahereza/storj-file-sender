@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/binary"
 	"errors"
 	"flag"
 	"io"
@@ -10,7 +11,6 @@ import (
 
 	"github.com/Samyoul/storj-file-sender/common"
 	"github.com/Samyoul/storj-file-sender/sender/codegen"
-	"encoding/binary"
 )
 
 func main() {
