@@ -13,18 +13,18 @@ import (
 	"github.com/Samyoul/storj-file-sender/common"
 )
 
-type Stream struct {
+type stream struct {
 	checksum []byte
 	filename []byte
 	sendConn chan net.Conn
 	wg       sync.WaitGroup
 }
 
-func (s *Stream) Close() {
+func (s *stream) Close() {
 	close(s.sendConn)
 }
 
-type streamMap map[string]*Stream
+type streamMap map[string]*stream
 
 func main() {
 	// get init argument
@@ -102,7 +102,7 @@ func validateArgs(args []string) error {
 }
 
 func send(sm *streamMap, conn net.Conn, hdr common.Header) error {
-	s := &Stream{}
+	s := &stream{}
 	(*sm)[string(hdr["Code"])] = s
 
 	s.filename = hdr["Filename"]
