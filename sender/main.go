@@ -44,20 +44,30 @@ func main() {
 	if err != nil {
 		log.Fatalf("Error - making a connection : %s", err)
 	}
+	defer conn.Close()
 
-	// Set write buffer
+	// Set write buffer size
 	err = conn.(*net.TCPConn).SetWriteBuffer(common.BufferLimit)
 	if err != nil {
 		log.Fatalf("Error - setting write buffer : %s", err)
 	}
 
-	// Write and send header on connection
+	// Write and send header on connection send checksum with header
+	hdr := common.MakeRequestHeaderSend(code, h.Sum(nil))
+	conn.Write(hdr)
 
-	// begin transfer on accept, send checksum with meta data
+	// Open file hold ready to transfer
+	f, err := os.Open(*fn)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer f.Close()
 
-	// wait for transfer to complete
-
-	// no errors exit
+	// begin transfer on accept
+	_, err = io.Copy(conn, f)
+	if err != nil {
+		log.Fatal(err)
+	}
 }
 
 func validateFlags(host *string, fn *string) error {
