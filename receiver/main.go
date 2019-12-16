@@ -1,10 +1,13 @@
 package main
 
 import (
+	"bytes"
 	"flag"
+	"io"
 	"log"
 	"net"
 	"os"
+
 	"github.com/Samyoul/storj-file-sender/common"
 )
 
@@ -12,7 +15,7 @@ func main() {
 	// get arguments
 	host := flag.String("host", "", "Mandatory - The host of the file relay")
 	code := flag.String("code", "", "Mandatory - The secret code of the file you wish to receive")
-	dir := flag.String("out", "", "Mandatory - The name of the directory name you wish to receive the file to")
+	dir := flag.String("out", "./", "Mandatory - The name of the directory name you wish to receive the file to")
 	flag.Parse()
 
 	validateFlags(host, code, dir)
@@ -25,16 +28,39 @@ func main() {
 	defer conn.Close()
 
 	// make receive request to relay
-	hdr := common.MakeRequestHeaderReceive(*code)
-	conn.Write(hdr)
+	reqH := common.MakeRequestHeaderReceive(*code)
+	conn.Write(reqH)
 
-	// start to receive data stream and checksum in meta data
+	// get receive response header from relay with checksum and filename
+	resH, err := common.GetResponseHeader(conn)
+	if err != nil {
+		log.Fatalf("Error - reading response header : %s", err)
+	}
 
-	// write data to file from arguments
+	// start to receive data stream
+	fn := *dir + string(resH["Filename"])
+
+	f, err := os.Create(fn)
+	if err != nil {
+		log.Fatalf("Error - creating file : %s", err)
+	}
+	defer f.Close()
+
+	// write data to file
+	_, err = io.Copy(f, conn)
+	if err != nil {
+		log.Fatalf("Error - creating file : %s", err)
+	}
 
 	// check file complete with checksum comparison.
+	h, err := common.HashFile(fn)
+	if err != nil {
+		log.Fatalf("Error - Checksumming file %s : %s", fn, err)
+	}
 
-	// no errors exit
+	if bytes.Compare(h.Sum(nil), resH["Checksum"]) == 0 {
+		log.Fatalf("Error - Checksum does not match")
+	}
 }
 
 func validateFlags(host *string, code *string, dir *string) {
