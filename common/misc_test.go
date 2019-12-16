@@ -1,11 +1,12 @@
 package common
 
 import (
-	"testing"
+	"crypto/sha256"
+	"encoding/hex"
 	"hash"
 	"os"
 	"reflect"
-	"encoding/hex"
+	"testing"
 )
 
 func Test_HashFile(t *testing.T) {
