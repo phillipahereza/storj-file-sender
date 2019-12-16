@@ -42,7 +42,7 @@ func Test_HashFile(t *testing.T) {
 	}
 
 	for _, c := range cs {
-		hsr, err := HashFile(&c.Filename)
+		hsr, err := HashFile(c.Filename)
 		if reflect.TypeOf(err) != reflect.TypeOf(c.ExpectErr) {
 			t.Errorf(c.FailMsg, err)
 			continue

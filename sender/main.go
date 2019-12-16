@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/binary"
 	"errors"
 	"flag"
 	"io"
@@ -10,7 +9,6 @@ import (
 	"os"
 
 	"github.com/Samyoul/storj-file-sender/common"
-	"github.com/Samyoul/storj-file-sender/sender/codegen"
 )
 
 func main() {
@@ -32,7 +30,8 @@ func main() {
 
 	// generate secret code
 	// Use the int64 encoded checksum of the file as part of the random seed
-	code := codegen.Make(int64(binary.BigEndian.Uint64(h.Sum(nil))))
+	//code := codegen.Make(int64(binary.BigEndian.Uint64(h.Sum(nil))))
+	code := "soup"
 
 	// display secret code
 	println(code)
@@ -63,6 +62,19 @@ func main() {
 
 	// begin transfer on accept
 	_, err = io.Copy(conn, f)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// Add file terminator so the copy of connections knows to stop
+	_, err = conn.Write(common.Terminator)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	// Read response
+	buff := make([]byte, 2)
+	_, err = conn.Read(buff)
 	if err != nil {
 		log.Fatal(err)
 	}
