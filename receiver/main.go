@@ -2,7 +2,10 @@ package main
 
 import (
 	"flag"
+	"log"
+	"net"
 	"os"
+	"github.com/Samyoul/storj-file-sender/common"
 )
 
 func main() {
@@ -14,7 +17,16 @@ func main() {
 
 	validateFlags(host, code, dir)
 
+	// open connection with relay
+	conn, err := net.Dial("tcp", *host)
+	if err != nil {
+		log.Fatalf("Error - making a connection : %s", err)
+	}
+	defer conn.Close()
+
 	// make receive request to relay
+	hdr := common.MakeRequestHeaderReceive(*code)
+	conn.Write(hdr)
 
 	// start to receive data stream and checksum in meta data
 
