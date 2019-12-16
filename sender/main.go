@@ -3,7 +3,6 @@ package main
 import (
 	"encoding/binary"
 	"errors"
-	"flag"
 	"io"
 	"log"
 	"net"
@@ -15,19 +14,17 @@ import (
 
 func main() {
 	// get arguments
-	host := flag.String("host", "", "Mandatory - The host of the file relay")
-	fn := flag.String("file", "", "Mandatory - The name of the file you wish to transfer")
-	flag.Parse()
+	args := os.Args
 
-	err := validateFlags(host, fn)
+	err := validateArgs(args)
 	if err != nil {
-		log.Fatalf("Error - Validating flags : %s", err)
+		log.Fatalf("Error - Validating arguments : %s", err)
 	}
 
 	// checksum file
-	h, err := common.HashFile(*fn)
+	h, err := common.HashFile(args[2])
 	if err != nil {
-		log.Fatalf("Error - Checksumming file %s : %s", *fn, err)
+		log.Fatalf("Error - Checksumming file %s : %s", args[2], err)
 	}
 
 	// generate secret code
@@ -38,7 +35,7 @@ func main() {
 	println(code)
 
 	// open connection with relay
-	conn, err := net.Dial("tcp", *host)
+	conn, err := net.Dial("tcp", args[1])
 	if err != nil {
 		log.Fatalf("Error - making a connection : %s", err)
 	}
@@ -51,11 +48,11 @@ func main() {
 	}
 
 	// Write and send header on connection, send checksum and filename with header
-	hdr := common.MakeRequestHeaderSend(*fn, code, h.Sum(nil))
+	hdr := common.MakeRequestHeaderSend(args[2], code, h.Sum(nil))
 	conn.Write(hdr)
 
 	// Open file hold ready to transfer
-	f, err := os.Open(*fn)
+	f, err := os.Open(args[2])
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -81,23 +78,12 @@ func main() {
 	}
 }
 
-func validateFlags(host *string, fn *string) error {
-	failed := false
-	msg := "Mandatory flag(s) missing : "
-
-	if *host == "" {
-		msg += "'host', "
-		failed = true
-	}
-
-	if *fn == "" {
-		msg += "'file', "
-		failed = true
-	}
-
-	if failed {
-		msg += "\nFor help using this command tool please enter 'sender -h'"
-		return errors.New(msg)
+func validateArgs(args []string) error {
+	if len(args) < 3 {
+		return errors.New(
+			"mandatory arguments not present.\n" +
+				"Expect the following arguments : `./send <relay-host>:<relay-port> <file-to-send>`\n" +
+				"Example : `./send localhost:9021 corgis.mp4`")
 	}
 
 	return nil
