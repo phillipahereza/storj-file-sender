@@ -25,9 +25,9 @@ func main() {
 	}
 
 	// checksum file
-	h, err := common.HashFile(fn)
+	h, err := common.HashFile(*fn)
 	if err != nil {
-		log.Fatalf("Error - Checksumming file %s : %s\n", *fn, err)
+		log.Fatalf("Error - Checksumming file %s : %s", *fn, err)
 	}
 
 	// generate secret code
