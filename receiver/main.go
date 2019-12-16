@@ -58,7 +58,7 @@ func main() {
 		log.Fatalf("Error - Checksumming file %s : %s", fn, err)
 	}
 
-	if bytes.Compare(h.Sum(nil), resH["Checksum"]) == 0 {
+	if bytes.Compare(h.Sum(nil), resH["Checksum"]) != 0 {
 		log.Fatalf("Error - Checksum does not match")
 	}
 }
