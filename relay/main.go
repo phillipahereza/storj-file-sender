@@ -132,7 +132,12 @@ func send(sm *streamMap, conn net.Conn, hdr common.Header) error {
 	s.sendConn <- conn
 	s.wg.Wait()
 
-	conn.Write([]byte("ok"))
+	_, err = conn.Write([]byte("ok"))
+	if err != nil {
+		return err
+	}
+
+	delete(*sm, string(hdr["Code"]))
 
 	return nil
 }
