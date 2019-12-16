@@ -1,11 +1,9 @@
 package main
 
 import (
-	"crypto/sha256"
 	"encoding/binary"
 	"errors"
 	"flag"
-	"hash"
 	"io"
 	"log"
 	"net"
@@ -27,7 +25,7 @@ func main() {
 	}
 
 	// checksum file
-	h, err := hashFile(fn)
+	h, err := common.HashFile(fn)
 	if err != nil {
 		log.Fatalf("Error - Checksumming file %s : %s\n", *fn, err)
 	}
