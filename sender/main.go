@@ -91,19 +91,3 @@ func validateFlags(host *string, fn *string) error {
 
 	return nil
 }
-
-func hashFile(fn *string) (hash.Hash, error) {
-	h := sha256.New()
-
-	f, err := os.Open(*fn)
-	if err != nil {
-		return nil, err
-	}
-	defer f.Close()
-
-	if _, err := io.Copy(h, f); err != nil {
-		return nil, err
-	}
-
-	return h, nil
-}

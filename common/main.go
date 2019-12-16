@@ -1,10 +1,13 @@
 package common
 
 import (
+	"bytes"
+	"crypto/sha256"
 	"errors"
 	"fmt"
+	"hash"
 	"io"
-	"bytes"
+	"os"
 )
 
 const (
@@ -158,4 +161,20 @@ func GetResponseHeader(conn io.Reader) (Header, error) {
 	}
 
 	return hdr, nil
+}
+
+func HashFile(fn *string) (hash.Hash, error) {
+	h := sha256.New()
+
+	f, err := os.Open(*fn)
+	if err != nil {
+		return nil, err
+	}
+	defer f.Close()
+
+	if _, err := io.Copy(h, f); err != nil {
+		return nil, err
+	}
+
+	return h, nil
 }
