@@ -11,13 +11,8 @@ import (
 	"net"
 	"os"
 
+	"github.com/Samyoul/storj-file-sender/common"
 	"github.com/Samyoul/storj-file-sender/sender/codegen"
-)
-
-const (
-	Kb          = 1024
-	Mb          = Kb * Kb
-	BufferLimit = Mb * 4
 )
 
 func main() {
@@ -51,7 +46,7 @@ func main() {
 	}
 
 	// Set write buffer
-	err = conn.(*net.TCPConn).SetWriteBuffer(BufferLimit)
+	err = conn.(*net.TCPConn).SetWriteBuffer(common.BufferLimit)
 	if err != nil {
 		log.Fatalf("Error - setting write buffer : %s", err)
 	}
