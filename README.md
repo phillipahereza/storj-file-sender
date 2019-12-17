@@ -164,6 +164,6 @@ Given the time restrictions on this task there are a lot of this that could be i
 - Better test coverage
 - More in depth tests
 - Better error handling between connections. Functionality to allow the `Relay` to inform the `Sender` and `Receiver` specifically why something went wrong on the `Relay` and then display this error to the user of either the `Sender` or the `Receiver`. This could be acheived with expanding the Header protocol.
-- Research into potentially more efficient methods of transferring data between to concurrent connections.
+- Research into potentially more efficient methods of transferring data between two concurrent connections.
 - Add a `-h` flag to the CLI of each application, to allow the user to discover what arguments are expect without failing.
 - Lower chance of secret code collision via higher entropy.
