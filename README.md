@@ -2,6 +2,23 @@
 
 My solution for the [Storj interview question](https://gist.github.com/jtolds/0cde4aa3e07b20d6a42686ad3bc9cb53).
 
+## Contents
+
+- [Installation](#installation)
+- [Testing](#testing)
+- [Usage](#usage)
+  - [Relay](#relay)
+  - [Sender](#sender)
+  - [Receiver](#receiver)
+- [Justifications](#justifications)
+  - [codegen](#codegen)
+  - [Checksuming](#checksuming)
+  - [TCP](#tcp)
+  - [Data Terminator](#data-terminator)
+  - [Headers](#headers)
+  - [Concurrency](#concurrency)
+- [Improvements](#Improvements)
+
 ## Installation
 
 This repository uses no none core packages in the main code, but the tests use [`spew`](https://github.com/davecgh/go-spew). To install this dependency enter the following command.
@@ -81,6 +98,8 @@ A package of the `Sender` application is `codegen`. This little package's purpos
 
 Because the specification states that the users are talking on the phone I tried to make the secret code something that could be easy to remember and easy to convey. So I chose a [passphrase-esque approach](https://xkcd.com/936/).
 
+In order to get as random result as possible I sum the `BigEndian` sum of the file hash with the unix time, to form the random seed. This means that the chance of two simultaneous senders getting the same secret code for different files is incredibly small. From the pool of 420 animals, 852 colours, 1133 adjectives plus a number between 0 and 10,000 there are 4,054,732,632,720‬‬ possible combinations of secret codes.
+
 The kinds of secret codes you will get are things like, `magical-liver-mouse-deer-311`, `mundane-chestnut-tarantula-989` and `political-lemon-glacier-lynx-348`.
 
 ### Checksuming
@@ -147,3 +166,4 @@ Given the time restrictions on this task there are a lot of this that could be i
 - Better error handling between connections. Functionality to allow the `Relay` to inform the `Sender` and `Receiver` specifically why something went wrong on the `Relay` and then display this error to the user of either the `Sender` or the `Receiver`. This could be acheived with expanding the Header protocol.
 - Research into potentially more efficient methods of transferring data between to concurrent connections.
 - Add a `-h` flag to the CLI of each application, to allow the user to discover what arguments are expect without failing.
+- Lower chance of secret code collision via higher entropy.
