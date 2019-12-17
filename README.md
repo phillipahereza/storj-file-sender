@@ -103,7 +103,7 @@ In order to get as random result as possible I sum the `BigEndian` sum of the fi
 The kinds of secret codes you will get are things like, `magical-liver-mouse-deer-311`, `mundane-chestnut-tarantula-989` and `political-lemon-glacier-lynx-348`.
 
 ### Checksuming
-Although TCP has native checksuming and Go is a super language and during my testing and developing I haven't seen any data that got mashed up or eaten on my local machine, but some networks could do this. So from the beginning I developed this system with the understanding that part of the data transfer would include a checksum of the original file, to ensure that the integrity of the file was determinable at the `Receiver's` side.  
+Although TCP has native checksuming and Go is a super language and during my testing and developing I haven't seen any data that got mashed up or eaten on my local machine, some networks / machines could do this. So from the beginning I developed this system with the understanding that part of the data transfer would include a checksum of the original file, to ensure that the integrity of the file was determinable at the `Receiver's` side.  
 
 ### TCP
 >Your relay program should not use much memory. It should not use more than 4MB of memory or storage per transfer, regardless of the size of the file being transfered.
@@ -111,12 +111,12 @@ Although TCP has native checksuming and Go is a super language and during my tes
 This stood out to me in the specifications and so I immediately thought of using TCP for transferring the data between the remote parties. TCP is an excellent data streaming protocol and for this reason I chose TCP to send files of an unknown size. 
 
 ### Data Terminator
-Something that I spent a worrying amount of time on was the copying of `net.TCPConns` via the `io.Copy` function. My problem was that `io.Copy` will never end its internal `for{}` unless one of the connections closed. This causes, or at least in my development, the `io.Copy(conn, sConn)` to hang indefinitely because neither connection can be closed with both are in the `io.Copy`.
+Something that I spent a worrying amount of time on was the copying of `net.TCPConns` via the `io.Copy` function. My problem was that `io.Copy` will never end its internal `for{}` unless one of the connections closed. This causes, or at least in my development, the `io.Copy(conn, sConn)` to hang indefinitely because neither connection can be closed while both are in the `io.Copy`.
 
 To fix this I implemented a data terminator into the protocol to notify the `Relay` when the body of the data had reached its end. As stated in the comments most of the implementation is just copy and paste of the core `io.Copy` func, the can code be [seen here](https://github.com/Samyoul/storj-file-sender/blob/master/relay/main.go#L156).
 
 ### Headers
-This challenge required more than just the raw file data to be transferred it also required that additional meta data be transferred. To facilitate the sending of additional meta data I implemented functionality for the creation and handling of data headers.
+This challenge required more than just the raw file data to be transferred, it required that additional meta data be transferred. To facilitate the sending of additional meta data I implemented functionality for the creation and handling of data headers.
 
 The code for this can be [seen here](https://github.com/Samyoul/storj-file-sender/blob/master/common/header.go).
 
@@ -136,7 +136,7 @@ A `send` request header has the following additional fields
 |`Checksum`|32|
 |`Filename`|Until data terminator|
 
-Because filename was the only piece of meta data that was required to be sent from sender to receiver and was the only variable that could be of any length the filenames are appended to the end of the header and are delimited from the data stream via the use of the data terminator.
+Because filename was the only piece of meta data that was required to be sent from sender to receiver and was the only variable that could be of any length, the filenames are appended to the end of the header and are delimited from the data stream via the use of the data terminator.
 
 **Responses**
 
@@ -152,7 +152,7 @@ This test requires a few concurrency techniques because the specifications requi
 
 >Your relay program should support multiple people sending files at the same time.
 
-Concurrency would be required even if multiple people sending files wasn't a requirement as both the `Sender` and `Receiver` have concurrent TCP connections with the `Relay`. So my approach of **pushing the connection handler into a go routine** can allow for `n` number of concurrent connections.
+Concurrency would be required even if multiple people sending files wasn't a requirement, as both the `Sender` and `Receiver` have concurrent TCP connections with the `Relay`. So my approach of **pushing the connection handler into a go routine** can allow for `n` number of concurrent connections.
 
 Now that we have multiple concurrent connections we need a way to ensure data can be transferred between them. To allow this I implemented a simple `stream` struct that was mapped to a `streamMap`. The `stream` struct holds a `chan net.Conn` to allow for data streaming between concurrent processes.
 
@@ -165,5 +165,5 @@ Given the time restrictions on this task there are a lot of this that could be i
 - More in depth tests
 - Better error handling between connections. Functionality to allow the `Relay` to inform the `Sender` and `Receiver` specifically why something went wrong on the `Relay` and then display this error to the user of either the `Sender` or the `Receiver`. This could be acheived with expanding the Header protocol.
 - Research into potentially more efficient methods of transferring data between two concurrent connections.
-- Add a `-h` flag to the CLI of each application, to allow the user to discover what arguments are expect without failing.
+- Add a `-h` flag to the CLI of each application, to allow the user to discover what arguments are expected without failing.
 - Lower chance of secret code collision via higher entropy.
