@@ -112,7 +112,7 @@ This stood out to me in the specifications and so I immediately thought of using
 
 ### Data Terminator
 
-**EDIT :** As of [this commit](./commit/99f322e07d7d0c4f39b0c8693cfda3a62194aeab) the data terminator is only used as deliminator for header data. 
+**EDIT :** As of [this commit](https://github.com/Samyoul/storj-file-sender/commit/99f322e07d7d0c4f39b0c8693cfda3a62194aeab) the data terminator is only used as deliminator for header data. 
 
 ~~Something that I spent a worrying amount of time on was the copying of `net.TCPConns` via the `io.Copy` function. My problem was that `io.Copy` will never end its internal `for{}` unless one of the connections closed. This causes, or at least in my development, the `io.Copy(conn, sConn)` to hang indefinitely because neither connection can be closed while both are in the `io.Copy`.~~
 
