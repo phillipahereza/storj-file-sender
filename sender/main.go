@@ -63,6 +63,7 @@ func main() {
 		log.Fatal(err)
 	}
 
+	/*
 	// Add file terminator so the copy of connections knows to stop
 	_, err = conn.Write(common.Terminator)
 	if err != nil {
@@ -75,6 +76,7 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	*/
 }
 
 func validateArgs(args []string) error {

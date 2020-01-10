@@ -1,7 +1,6 @@
 package main
 
 import (
-	"bytes"
 	"errors"
 	"fmt"
 	"io"
@@ -120,10 +119,12 @@ func send(sm *streamMap, conn net.Conn, hdr common.Header) error {
 	s.sendConn <- conn
 	s.wg.Wait()
 
+	/*
 	_, err = conn.Write([]byte("ok"))
 	if err != nil {
 		return err
 	}
+	*/
 
 	delete(*sm, string(hdr["Code"]))
 
@@ -143,7 +144,7 @@ func receive(sm *streamMap, conn net.Conn, hdr common.Header) error {
 		return err
 	}
 
-	_, err = connCopy(conn, <-s.sendConn)
+	_, err = io.Copy(conn, <-s.sendConn)
 	if err != nil {
 		return err
 	}
@@ -158,6 +159,7 @@ func receive(sm *streamMap, conn net.Conn, hdr common.Header) error {
 // as a read on an open connection will never throw an error and therefore loop infinitely until the conn is closed.
 // This has the affect of copying conns via the io.copy just hanging as neither conns will be closed
 // So I've implemented a deliminator to check if the body transmission is complete
+/*
 func connCopy(dst io.Writer, src io.Reader) (written int64, err error) {
 	size := 32 * 1024
 	buf := make([]byte, size)
@@ -198,3 +200,4 @@ func connCopy(dst io.Writer, src io.Reader) (written int64, err error) {
 	}
 	return written, err
 }
+*/
