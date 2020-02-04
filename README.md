@@ -6,7 +6,7 @@
 |Completed: |2019-12-17|
 |Name : |File Sender Service|
 |Status : |Unsuccessful|
-|Feedback : |`Awaiting ...`|
+|Feedback : |2020-02-03 :<br/><br/> "Thank you for your dutiful follow-ups. I've reached out for feedback but have yet to receive any. With that said, we typically refrain from offering direct feedback following the interview process.<br/><br/>I appreciate your desire for continuous improvement and apologize that we are unable to provide feedback at this current time."|
 
 
 My solution for the [Storj interview question](https://gist.github.com/jtolds/0cde4aa3e07b20d6a42686ad3bc9cb53).
